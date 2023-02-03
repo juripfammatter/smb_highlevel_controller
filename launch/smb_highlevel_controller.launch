@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <launch>
-	<!-- open teleop_twist_keyboard.py (remove output) -->
-	<node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen"/>
+	<arg name="world_name" default="$(find smb_highlevel_controller)/worlds/singlePillar.world"/>
+	<arg name="laser_enabled" default="true"/>
+	<arg name="laser_scan_min_height" default="-0.2" />
+	<arg name="laser_scan_max_height" default="1" />
 
 	<!-- Include smb_gazebo.launch / change world / enable laser -->
 	<include file="$(find smb_gazebo)/launch/smb_gazebo.launch">
-		<arg name="world_file" value="$(find smb_gazebo)/worlds/big_map_summer_school.world"/>
-		<arg name="laser_enabled" value="true"/>
+		<arg name="world_file" value="$(arg world_name)"/>		
+		<arg name="laser_enabled" value="$(arg laser_enabled)"/>
+		<arg name="laser_scan_min_height" value="$(arg laser_scan_min_height)" />
+		<arg name="laser_scan_max_height" value="$(arg laser_scan_max_height)" />
 	</include>
 
 	<!-- run highlevel_controller -->

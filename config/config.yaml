@@ -1,2 +1,5 @@
 subscriber_topic: /scan
+publisher_topic: /cmd_vel
 queue_size: 10
+kp_ang: 4.0
+kp_lin: 0.2

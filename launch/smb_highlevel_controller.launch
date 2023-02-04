@@ -20,5 +20,5 @@
 	</node>
 
 	<!-- Run Rviz-->
-	<node name="rviz" pkg="rviz" type="rviz" output="screen"/>
+	<node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find smb_highlevel_controller)/config/rviz_config.rviz"/>
 </launch>

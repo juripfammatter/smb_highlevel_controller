@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>	
+
+	<!-- Dependencies-->
+
+	<!--  run ekf node-->
+	<node name="ekf_localization" pkg="robot_localization" type="ekf_localization_node">
+		<rosparam command="load" file="$(find smb_highlevel_controller)/config/localization.yaml" />
+	</node>
+
+	<!-- robot state publisher-->
+	<node name="smb_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+  	</node>
+
+	<!-- load robot description file-->
+	<include file="$(find smb_description)/launch/load.launch">		
+	</include>
+
+	<!-- add static tf frame 2m above base link-->
+	<node pkg="tf" type="static_transform_publisher" name="smb_top_view" args="0 0 2 0 0 0 base_link smb_top_view 100" />
+
+
+
+	<!-- Run Simulation-->
+
+	<!-- use ros time-->
+	<param name="use_sim_time" value="true" />
+ 	
+	<!-- start rqt multiplot-->
+	<node name="rqt_multiplot" pkg="rqt_multiplot" type="rqt_multiplot" output="screen" />
+
+	<!-- Run Rviz-->
+	<node name="rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find smb_highlevel_controller)/config/rviz_config.rviz"/>
+
+	<!-- play .bag file -->
+	<arg name="path" default="$(find smb_highlevel_controller)/bags/" />
+	<arg name="file_1" default="smb_navigation" />
+	<arg name="rate" default="1" />
+	<node pkg="rosbag" type="play" name="player" output="screen" args="--clock --rate=$(arg rate) $(arg path)$(arg file_1).bag"/>
+	
+</launch>

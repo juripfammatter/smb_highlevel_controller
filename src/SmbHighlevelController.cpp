@@ -20,6 +20,9 @@ SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nodeHandle) :
 	publisher_ = nodeHandle_.advertise<geometry_msgs::Twist>(pub_topic,1);
 	vis_pub_ = nodeHandle_.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
 
+	// advertise emergency service
+	service_ = nodeHandle_.advertiseService(emergency_stop_service, &SmbHighlevelController::emergencyStop, this);
+
 	ROS_INFO("Successfully launched node.");
 }
 
@@ -32,10 +35,11 @@ SmbHighlevelController::~SmbHighlevelController()
 /* parameter function */
 bool SmbHighlevelController::readParameters(void){
 	if (!nodeHandle_.getParam("subscriber_topic", sub_topic) ||
-			!nodeHandle_.getParam("publisher_topic", pub_topic) ||
-			!nodeHandle_.getParam("queue_size", queue_size) ||
-			!nodeHandle_.getParam("kp_ang", kp_ang) ||
-			!nodeHandle_.getParam("kp_lin", kp_lin))
+		!nodeHandle_.getParam("publisher_topic", pub_topic) ||
+		!nodeHandle_.getParam("queue_size", queue_size) ||
+		!nodeHandle_.getParam("kp_ang", kp_ang) ||
+		!nodeHandle_.getParam("kp_lin", kp_lin) ||
+		!nodeHandle_.getParam("service_name", emergency_stop_service))
 	{
 		return 0;
 	} else {
@@ -145,12 +149,30 @@ void SmbHighlevelController::scanCallback(const sensor_msgs::LaserScan& msg)
 	visMarker(pos_odom);
 
 	// Publish
-	vel_message.angular.z = getGain(angle, "angular");
-	vel_message.linear.x = getGain(min_dist, "linear");
+	if(!emergency_stop){
+		vel_message.angular.z = getGain(angle, "angular");
+		vel_message.linear.x = getGain(min_dist, "linear");
 
-	publisher_.publish(vel_message);
-	ROS_INFO_STREAM("lin:" << vel_message.linear.x << "ang:" <<vel_message.angular.z);
-
+		publisher_.publish(vel_message);
+		ROS_INFO_STREAM("lin:" << vel_message.linear.x << "ang:" <<vel_message.angular.z);
+	}
 }
+
+/* emergency stop*/
+bool SmbHighlevelController::emergencyStop(std_srvs::SetBool::Request &request, std_srvs::SetBool::Response &response){
+	emergency_stop = request.data;
+
+	if(emergency_stop){
+		vel_message.angular.z = 0;
+		vel_message.linear.x = 0;
+		publisher_.publish(vel_message);
+		response.message = "emergency flag set";
+	} else {
+		response.message = "emergency flag reset";
+	}
+
+	response.success = true;
+}
+
 
 } /* namespace */

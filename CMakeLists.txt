@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   visualization_msgs
   tf
+  std_srvs
 )
 
 ###################################
@@ -26,6 +27,7 @@ catkin_package(
     geometry_msgs
     visualization_msgs
     tf
+    std_srvs
 # DEPENDS
 )
 

@@ -1,5 +1,6 @@
 subscriber_topic: /scan
 publisher_topic: /cmd_vel
+service_name: /emergency_stop
 queue_size: 10
 kp_ang: 4.0
 kp_lin: 0.2

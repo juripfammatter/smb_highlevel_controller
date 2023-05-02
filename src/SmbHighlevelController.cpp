@@ -9,9 +9,9 @@ SmbHighlevelController::SmbHighlevelController(ros::NodeHandle& nodeHandle) :
 {
 	// get param from param.yaml
 	if(!SmbHighlevelController::readParameters()){
-		 ROS_ERROR("Could not find params!");
-		 ros::requestShutdown();
-	 }
+		ROS_ERROR("Could not find params!");
+		ros::requestShutdown();
+	}
 
 	// create subscriber
 	subscriber_= nodeHandle_.subscribe(sub_topic,queue_size, &SmbHighlevelController::scanCallback, this);

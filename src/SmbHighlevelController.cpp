@@ -156,6 +156,17 @@ void SmbHighlevelController::scanCallback(const sensor_msgs::LaserScan& msg)
 		publisher_.publish(vel_message);
 		ROS_INFO_STREAM("lin:" << vel_message.linear.x << "ang:" <<vel_message.angular.z);
 	}
+
+	/* get current pose in respect to map frame*/
+	tf::StampedTransform tf_map;
+	tf::Vector3 robot_pose;
+	tf::Vector3 robot_pose_map;
+
+	tf_map = getTransform(tf_map, "/map", "/base_link");
+	robot_pose_map = tf_map*robot_pose;
+
+	ROS_INFO_STREAM("Pose in respect to map: x:" << robot_pose_map.x() << " y:" << robot_pose_map.y());
+
 }
 
 /* emergency stop*/
